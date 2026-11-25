@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ledgerline"
+version = "0.1.0"
+description = "Multi-tenant immutable double-entry ledger and bank reconciliation backend"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.14,<2",
+    "asyncpg>=0.30,<1",
+    "charset-normalizer>=3.4,<4",
+    "fastapi>=0.115,<1",
+    "prometheus-client>=0.21,<1",
+    "pydantic>=2.10,<3",
+    "pydantic-settings>=2.7,<3",
+    "rapidfuzz>=3.10,<4",
+    "scipy>=1.14,<2",
+    "sqlalchemy[asyncio]>=2.0.36,<3",
+    "structlog>=24.4,<26",
+    "typer>=0.15,<1",
+    "uvicorn[standard]>=0.32,<1",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28,<1",
+    "hypothesis>=6.120,<7",
+    "mypy>=1.13,<2",
+    "pytest>=8.3,<9",
+    "pytest-asyncio>=0.24,<1",
+    "ruff>=0.8,<1",
+    "schemathesis>=3.38,<4",
+]
+
+[project.scripts]
+ledgerline = "ledgerline.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ledgerline"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests", "tools"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = [
+    "ledgerline.domain.*",
+    "ledgerline.services.*",
+]
+strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
